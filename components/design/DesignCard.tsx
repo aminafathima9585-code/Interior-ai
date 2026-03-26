@@ -1,12 +1,11 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Design } from '@/types';
-import { Check, Wand2, Heart } from 'lucide-react';
+import { Check, Wand2, Heart, ImageIcon, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface DesignCardProps {
   design: Design;
@@ -22,6 +21,8 @@ export function DesignCard({
   onCustomize,
 }: DesignCardProps) {
   const [isLiked, setIsLiked] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
 
   return (
     <motion.div
@@ -36,51 +37,80 @@ export function DesignCard({
         }`}
         onClick={onSelect}
       >
-        <div className="relative aspect-[4/3] overflow-hidden">
-          <Image
-            src={design.image}
-            alt={design.description}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60" />
+        <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-slate-700 to-slate-800">
           
+          {/* Loading state */}
+          {imageLoading && !imageError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-800 z-10">
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="w-10 h-10 text-purple-400 animate-spin" />
+                <p className="text-xs text-slate-400">Generating AI design...</p>
+              </div>
+            </div>
+          )}
+
+          {/* Error state */}
+          {imageError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-800 z-10">
+              <div className="flex flex-col items-center gap-2">
+                <ImageIcon className="w-10 h-10 text-slate-600" />
+                <p className="text-xs text-slate-500">Failed to load</p>
+              </div>
+            </div>
+          )}
+
+          {/* Always use regular img tag for all external images */}
+          {!imageError && (
+            <img
+              src={design.image}
+              alt={design.description}
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+              onLoad={() => setImageLoading(false)}
+              onError={() => {
+                setImageError(true);
+                setImageLoading(false);
+              }}
+            />
+          )}
+
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60" />
+
           {/* Like button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               setIsLiked(!isLiked);
             }}
-            className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-black/60"
+            className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-black/60 z-20"
           >
             <Heart className={`w-4 h-4 transition-all ${isLiked ? 'fill-pink-500 text-pink-500 scale-110' : 'text-white'}`} />
           </button>
 
           {isSelected && (
-            <motion.div 
+            <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="absolute top-3 left-3 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg"
+              className="absolute top-3 left-3 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg z-20"
             >
               <Check className="w-4 h-4 text-white" />
             </motion.div>
           )}
 
-          {/* Overlay on hover */}
+          {/* Hover overlay */}
           <div className="absolute inset-0 bg-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
-        
+
         <CardContent className="p-4 bg-gradient-to-b from-transparent to-slate-900/50">
           <p className="text-sm text-gray-300 line-clamp-2 leading-relaxed">
             {design.description}
           </p>
-          
+
           <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
             <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">
-              {design.preferences.roomType || 'Room'}
+              {design.preferences?.roomType || 'Room'}
             </span>
             <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">
-              {design.preferences.styles?.[0] || 'Style'}
+              {design.preferences?.styles?.[0] || 'Style'}
             </span>
           </div>
 

@@ -11,6 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Download, Save, RotateCcw, Check, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 
+// Check if URL is from Pollinations.ai (needs regular img tag)
+const isPollinationsUrl = (url: string) => url?.includes('pollinations.ai');
+
 export default function CustomizePage() {
   const [customizedDesign, setCustomizedDesign] = useState<Design | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -174,12 +177,20 @@ export default function CustomizePage() {
                         <CardTitle className="text-gray-400 text-sm">Original Design</CardTitle>
                       </CardHeader>
                       <div className="relative aspect-[4/3]">
-                        <Image
-                          src={selectedDesign.image}
-                          alt="Original design"
-                          fill
-                          className="object-cover"
-                        />
+                        {isPollinationsUrl(selectedDesign.image) ? (
+                          <img
+                            src={selectedDesign.image}
+                            alt="Original design"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Image
+                            src={selectedDesign.image}
+                            alt="Original design"
+                            fill
+                            className="object-cover"
+                          />
+                        )}
                       </div>
                     </Card>
 
@@ -206,12 +217,20 @@ export default function CustomizePage() {
                               : 'none',
                           }}
                         >
-                          <Image
-                            src={customizedDesign.image}
-                            alt="Customized design"
-                            fill
-                            className="object-cover"
-                          />
+                          {isPollinationsUrl(customizedDesign.image) ? (
+                            <img
+                              src={customizedDesign.image}
+                              alt="Customized design"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Image
+                              src={customizedDesign.image}
+                              alt="Customized design"
+                              fill
+                              className="object-cover"
+                            />
+                          )}
                         </div>
                         
                         {/* Wall color overlay */}
@@ -281,12 +300,20 @@ export default function CustomizePage() {
                               : 'none',
                           }}
                         >
-                          <Image
-                            src={currentDesign.image}
-                            alt={currentDesign.description}
-                            fill
-                            className="object-cover"
-                          />
+                          {isPollinationsUrl(currentDesign.image) ? (
+                            <img
+                              src={currentDesign.image}
+                              alt={currentDesign.description}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Image
+                              src={currentDesign.image}
+                              alt={currentDesign.description}
+                              fill
+                              className="object-cover"
+                            />
+                          )}
                         </div>
                         
                         {/* Wall color overlay - more prominent */}

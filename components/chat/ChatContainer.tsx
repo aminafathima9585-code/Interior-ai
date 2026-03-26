@@ -8,12 +8,12 @@ import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Sparkles, Wand2 } from 'lucide-react';
+import { Loader2, Sparkles, Wand2, Trash2, Plus } from 'lucide-react';
 
 export function ChatContainer() {
   const [isLoading, setIsLoading] = useState(false);
   const [readyToGenerate, setReadyToGenerate] = useState(false);
-  const { messages, addMessage, preferences } = useDesignStore();
+  const { messages, addMessage, clearMessages, reset, preferences } = useDesignStore();
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -62,18 +62,52 @@ export function ChatContainer() {
     router.push('/design/generate');
   };
 
+  const handleClearChat = () => {
+    clearMessages();
+    setReadyToGenerate(false);
+  };
+
+  const handleNewChat = () => {
+    reset();
+    setReadyToGenerate(false);
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto bg-slate-900/50 border-white/10 backdrop-blur-xl overflow-hidden">
       <CardHeader className="border-b border-white/10 bg-gradient-to-r from-purple-900/20 to-pink-900/20">
-        <CardTitle className="flex items-center gap-3 text-white">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/25">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <div className="text-lg">Design Assistant</div>
-            <div className="text-xs text-gray-400 font-normal">Powered by AI</div>
-          </div>
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-3 text-white">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/25">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="text-lg">Design Assistant</div>
+              <div className="text-xs text-gray-400 font-normal">Powered by AI</div>
+            </div>
+          </CardTitle>
+          {messages.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearChat}
+                className="text-gray-400 hover:text-white hover:bg-white/10"
+                title="Clear chat"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleNewChat}
+                className="text-gray-400 hover:text-white hover:bg-white/10"
+                title="Start new chat"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="p-0">
         <div className="h-[450px] overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">

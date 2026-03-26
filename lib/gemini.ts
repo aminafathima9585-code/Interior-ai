@@ -37,10 +37,10 @@ The image should look like a professional interior design portfolio piece.`;
 
 export function getVariationModifier(index: number): string {
   const modifiers = [
-    'Focus on natural lighting and airy feel',
-    'Emphasize cozy textures and warm ambiance',
-    'Highlight modern minimalist aesthetic with statement pieces',
-    'Showcase eclectic mix with bold accent colors',
+    'bright natural lighting',
+    'warm cozy textures',
+    'minimalist elegant',
+    'bold accent colors',
   ];
   return modifiers[index % modifiers.length];
 }
